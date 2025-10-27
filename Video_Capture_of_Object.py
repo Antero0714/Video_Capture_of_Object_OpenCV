@@ -7,22 +7,17 @@ UPPER_RED_1 = np.array([10, 255, 255])
 LOWER_RED_2 = np.array([160, 100, 100])
 UPPER_RED_2 = np.array([180, 255, 255])
 
-# Минимальная площадь контура
+# Минимальная площадь
 MIN_AREA = 500
 
 def main():
-    # 1. Захват видео с камеры
     cap = cv2.VideoCapture(0)
     
-    print("'q' для выхода")
-    
     while True:
-        # Захват кадра
         ret, frame = cap.read()
         if not ret:
             break
         
-        # Преобразование в HSV
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         
         # Создание маски для красного цвета
@@ -30,7 +25,6 @@ def main():
         mask2 = cv2.inRange(hsv, LOWER_RED_2, UPPER_RED_2)
         mask = cv2.bitwise_or(mask1, mask2)
         
-        # Морфологические операции для устранения шума
         kernel = np.ones((5, 5), np.uint8)
         mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
         mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
@@ -41,7 +35,7 @@ def main():
         
         # Обработка контуров
         if contours:
-            # Находим самый большой контур
+            # самый большой контур
             largest_contour = max(contours, key=cv2.contourArea)
             
             # Проверяем площадь
@@ -125,11 +119,9 @@ def main():
         cv2.imshow('Original', frame)
         cv2.imshow('Mask', mask)
         
-        # Выход по нажатию 'q'
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
     
-    # Освобождение ресурсов
     cap.release()
     cv2.destroyAllWindows()
     print("Программа завершена.")
@@ -137,3 +129,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
